@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitPro | Client Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --gray-light: #e2e8f0;
+            --gradient-start: #4f46e5;
+            --gradient-end: #7c3aed;
+            --card-bg: #ffffff;
+            --body-bg: #f1f5f9;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dark-mode {
+            --card-bg: #1f2937;
+            --body-bg: #111827;
+            --text: #f3f4f6;
+            --text-light: #9ca3af;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            padding: 1.5rem 0;
+            transition: var(--transition);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-icon {
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+        
+        .menu-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 1.5rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.7;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9rem 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            border-radius: 0 12px 12px 0;
+            margin-right: 1rem;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 4px solid white;
+        }
+        
+        .menu-item i {
+            width: 24px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            transition: var(--transition);
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .header-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        
+        .header-title p {
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .search-bar {
+            position: relative;
+        }
+        
+        .search-bar input {
+            padding: 0.85rem 1rem 0.85rem 3rem;
+            border-radius: 12px;
+            border: 1px solid var(--gray-light);
+            background: var(--card-bg);
+            width: 280px;
+            font-size: 1rem;
+            color: var(--text);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .search-bar i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        
+        .action-icons {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        
+        .action-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            color: var(--text-light);
+        }
+        
+        .action-icon:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .notification-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 10px;
+            height: 10px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 2px solid var(--card-bg);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+        
+        .user-profile:hover {
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+        }
+        
+        .user-profile img {
+            width: 46px;
+            height: 46px;
+            border-radius: 50px;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .user-role {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.8rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+        
+        .stat-card.calories::before { background: var(--danger); }
+        .stat-card.steps::before { background: var(--primary); }
+        .stat-card.workouts::before { background: var(--secondary); }
+        .stat-card.sleep::before { background: var(--success); }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+        
+        .stat-icon.calories { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .stat-icon.steps { background: rgba(59, 130, 246, 0.15); color: var(--primary); }
+        .stat-icon.workouts { background: rgba(139, 92, 246, 0.15); color: var(--secondary); }
+        .stat-icon.sleep { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        
+        .stat-info h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+        
+        .stat-info p {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-change {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .stat-change.positive { color: var(--success); }
+        .stat-change.negative { color: var(--danger); }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .chart-container, .goals-container, .schedule-container, 
+        .workouts-container, .nutrition-container, .water-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.8rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+        
+        .chart-container:hover, .goals-container:hover, .schedule-container:hover,
+        .workouts-container:hover, .nutrition-container:hover, .water-container:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem;
+        }
+        
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-header h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            border-radius: 3px;
+        }
+        
+        .btn {
+            padding: 0.7rem 1.4rem;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray-light);
+            color: var(--text);
+        }
+        
+        .btn-outline:hover {
+            background: var(--gray-light);
+        }
+        
+        .chart-wrapper {
+            height: 320px;
+            position: relative;
+        }
+        
+        /* Goals */
+        .goal {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            transition: var(--transition);
+        }
+        
+        .goal:hover {
+            transform: translateX(5px);
+        }
+        
+        .goal:last-child {
+            border-bottom: none;
+        }
+        
+        .goal-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.2rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .goal-info {
+            flex: 1;
+        }
+        
+        .goal-info h4 {
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            font-size: 1.1rem;
+        }
+        
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--gray-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .progress-weight .progress-fill { background: var(--primary); width: 75%; }
+        .progress-muscle .progress-fill { background: var(--secondary); width: 60%; }
+        .progress-fat .progress-fill { background: var(--success); width: 85%; }
+        .progress-water .progress-fill { background: var(--danger); width: 45%; }
+        
+        .progress-value {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            min-width: 50px;
+            text-align: right;
+        }
+        
+        /* Workout Schedule */
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+            align-items: center;
+        }
+        
+        .schedule-nav {
+            display: flex;
+            gap: 0.6rem;
+        }
+        
+        .schedule-nav button {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--gray-light);
+            background: var(--card-bg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+        
+        .schedule-nav button:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .schedule-days {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+        
+        .schedule-day {
+            flex: 1;
+            min-width: 40px;
+            text-align: center;
+            padding: 0.8rem 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.95rem;
+            background: var(--body-bg);
+            color: var(--text-light);
+        }
+        
+        .schedule-day:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .schedule-day.active {
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+        }
+        
+        .schedule-item {
+            display: flex;
+            padding: 1.2rem;
+            border-radius: 12px;
+            background: var(--body-bg);
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .schedule-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        .schedule-time {
+            width: 90px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .schedule-details {
+            flex: 1;
+        }
+        
+        .schedule-details h4 {
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 1.1rem;
+        }
+        
+        .schedule-details p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+        
+        .schedule-trainer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        /* Workouts */
+        .workout {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .workout:hover {
+            transform: translateX(5px);
+        }
+        
+        .workout:last-child {
+            border-bottom: none;
+        }
+        
+        .workout-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            background: var(--body-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.2rem;
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+        
+        .workout-info {
+            flex: 1;
+        }
+        
+        .workout-info h4 {
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 1.1rem;
+        }
+        
+        .workout-stats {
+            display: flex;
+            gap: 1.2rem;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+        
+        .workout-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .workout-actions {
+            display: flex;
+            gap: 0.6rem;
+        }
+        
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-light);
+        }
+        
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Nutrition */
+        .nutrition-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+        }
+        
+        .nutrition-item {
+            background: var(--body-bg);
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .nutrition-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+        
+        .nutrition-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+        
+        .nutrition-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .nutrition-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .nutrition-goal {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        /* Water Tracker */
+        .water-tracker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+        
+        .water-goal {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .water-goal span {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .water-glasses {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-bottom: 1.8rem;
+        }
+        
+        .water-glass {
+            width: 50px;
+            height: 70px;
+            border-radius: 0 0 10px 10px;
+            background: var(--body-bg);
+            border: 2px solid var(--gray-light);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .water-glass.active {
+            border-color: var(--primary);
+        }
+        
+        .water-glass.active .water-fill {
+            background: var(--primary);
+            height: 60%;
+        }
+        
+        .water-glass .water-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: var(--gray-light);
+            transition: var(--transition);
+        }
+        
+        .water-add {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+        
+        .water-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .water-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .water-stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        .water-stat {
+            text-align: center;
+        }
+        
+        .water-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .water-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 101;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                width: 240px;
+            }
+            
+            .main-content {
+                margin-left: 240px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+            
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .search-bar input {
+                width: 200px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-profile .user-info {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .search-bar {
+                display: none;
+            }
+            
+            .action-icons {
+                gap: 0.8rem;
+            }
+            
+            .action-icon {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .section-header .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Button -->
+    <div class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">F</div>
+                <div class="logo-text">Fitpro</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-title">Main</div>
+            <div class="menu-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Progress</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-dumbbell"></i>
+                <span>Workouts</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-utensils"></i>
+                <span>Nutrition</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Schedule</span>
+            </div>
+            
+            <div class="menu-title">Analytics</div>
+            <div class="menu-item">
+                <i class="fas fa-heartbeat"></i>
+                <span>Health Metrics</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-trophy"></i>
+                <span>Achievements</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-file-invoice"></i>
+                <span>Reports</span>
+            </div>
+            
+            <div class="menu-title">Community</div>
+            <div class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Groups</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-comments"></i>
+                <span>Messages</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>Events</span>
+            </div>
+            
+            <div class="menu-title">Account</div>
+            <div class="menu-item">
+                <a href={~p"/users/settings"}>
+                <i class="fas fa-cog"></i>
+                <span>Settings</span></a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-question-circle"></i>
+                <span>Support</span>
+            </div>
+            <div class="menu-item">
+           <.link
+            href={~p"/users/log_out"}
+            method="delete" >
+             <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </.link>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <h1>Client Dashboard</h1>
+                <p>Welcome back,  Anorld! Here's your fitness overview for today</p>
+            </div>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search workouts, nutrition...">
+                </div>
+                <div class="action-icons">
+                    <div class="action-icon" id="dark-mode-toggle">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <div class="action-icon">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-dot"></div>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=200&w=200" alt="Anorld Otieno">
+                    <div class="user-info">
+                        <div class="user-name">Anorld Otieno</div>
+                                              <div class="current-user"><li class="text-[0.8125rem] leading-6 text-zinc-900">
+                            {@current_user.email}
+                         </li></div>
+                        <div class="user-role">Premium Member</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card calories animate" style="animation-delay: 0.1s">
+                <div class="stat-icon calories">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>1,842</h3>
+                    <p>Calories Burned</p>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12% from last week</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card steps animate" style="animation-delay: 0.2s">
+                <div class="stat-icon steps">
+                    <i class="fas fa-shoe-prints"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>12,568</h3>
+                    <p>Steps Today</p>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8% from yesterday</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card workouts animate" style="animation-delay: 0.3s">
+                <div class="stat-icon workouts">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>5/7</h3>
+                    <p>Workouts This Week</p>
+                    <div class="stat-change negative">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>2 less than last week</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card sleep animate" style="animation-delay: 0.4s">
+                <div class="stat-icon sleep">
+                    <i class="fas fa-bed"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>7.2h</h3>
+                    <p>Avg. Sleep</p>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>0.8h more than last week</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Progress Chart -->
+                <div class="chart-container animate" style="animation-delay: 0.2s">
+                    <div class="section-header">
+                        <h2>Fitness Progress</h2>
+                        <div>
+                            <button class="btn btn-outline">Week</button>
+                            <button class="btn btn-primary">Month</button>
+                            <button class="btn btn-outline">Year</button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <!-- Goals -->
+                    <div class="goals-container animate" style="animation-delay: 0.3s">
+                        <div class="section-header">
+                            <h2>Current Goals</h2>
+                            <button class="btn btn-outline">View All</button>
+                        </div>
+                        
+                        <div class="goal">
+                            <div class="goal-icon">
+                                <i class="fas fa-weight"></i>
+                            </div>
+                            <div class="goal-info">
+                                <h4>Target Weight: 65kg</h4>
+                                <div class="progress-wrapper">
+                                    <div class="progress-bar progress-weight">
+                                        <div class="progress-fill"></div>
+                                    </div>
+                                    <div class="progress-value">75%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="goal">
+                            <div class="goal-icon">
+                                <i class="fas fa-muscle"></i>
+                            </div>
+                            <div class="goal-info">
+                                <h4>Muscle Gain: +5kg</h4>
+                                <div class="progress-wrapper">
+                                    <div class="progress-bar progress-muscle">
+                                        <div class="progress-fill"></div>
+                                    </div>
+                                    <div class="progress-value">60%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="goal">
+                            <div class="goal-icon">
+                                <i class="fas fa-burn"></i>
+                            </div>
+                            <div class="goal-info">
+                                <h4>Fat Loss: -8%</h4>
+                                <div class="progress-wrapper">
+                                    <div class="progress-bar progress-fat">
+                                        <div class="progress-fill"></div>
+                                    </div>
+                                    <div class="progress-value">85%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nutrition -->
+                    <div class="nutrition-container animate" style="animation-delay: 0.4s">
+                        <div class="section-header">
+                            <h2>Nutrition Today</h2>
+                            <button class="btn btn-outline">Details</button>
+                        </div>
+                        
+                        <div class="nutrition-items">
+                            <div class="nutrition-item">
+                                <div class="nutrition-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="nutrition-title">Calories</div>
+                                <div class="nutrition-value">1,420</div>
+                                <div class="nutrition-goal">of 1,800 goal</div>
+                            </div>
+                            
+                            <div class="nutrition-item">
+                                <div class="nutrition-icon">
+                                    <i class="fas fa-apple-alt"></i>
+                                </div>
+                                <div class="nutrition-title">Carbs</div>
+                                <div class="nutrition-value">142g</div>
+                                <div class="nutrition-goal">45% of intake</div>
+                            </div>
+                            
+                            <div class="nutrition-item">
+                                <div class="nutrition-icon">
+                                    <i class="fas fa-egg"></i>
+                                </div>
+                                <div class="nutrition-title">Protein</div>
+                                <div class="nutrition-value">112g</div>
+                                <div class="nutrition-goal">35% of intake</div>
+                            </div>
+                            
+                            <div class="nutrition-item">
+                                <div class="nutrition-icon">
+                                    <i class="fas fa-bacon"></i>
+                                </div>
+                                <div class="nutrition-title">Fat</div>
+                                <div class="nutrition-value">47g</div>
+                                <div class="nutrition-goal">20% of intake</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Workout Schedule -->
+                <div class="schedule-container animate" style="animation-delay: 0.3s">
+                    <div class="section-header">
+                        <h2>Today's Schedule</h2>
+                        <button class="btn btn-outline">Add</button>
+                    </div>
+                    
+                    <div class="schedule-header">
+                        <h3>Wednesday, Oct 25</h3>
+                        <div class="schedule-nav">
+                            <button><i class="fas fa-chevron-left"></i></button>
+                            <button><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="schedule-days">
+                        <div class="schedule-day">Mon</div>
+                        <div class="schedule-day">Tue</div>
+                        <div class="schedule-day active">Wed</div>
+                        <div class="schedule-day">Thu</div>
+                        <div class="schedule-day">Fri</div>
+                        <div class="schedule-day">Sat</div>
+                        <div class="schedule-day">Sun</div>
+                    </div>
+                    
+                    <div class="schedule-item">
+                        <div class="schedule-time">8:00 AM</div>
+                        <div class="schedule-details">
+                            <h4>Morning Run</h4>
+                            <p>5km outdoor run</p>
+                            <div class="schedule-trainer">
+                                <i class="fas fa-user"></i>
+                                <span>Coach Michael</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="schedule-item">
+                        <div class="schedule-time">12:30 PM</div>
+                        <div class="schedule-details">
+                            <h4>Nutrition Consultation</h4>
+                            <p>Meal planning session</p>
+                            <div class="schedule-trainer">
+                                <i class="fas fa-user"></i>
+                                <span>Nutritionist Lisa</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="schedule-item">
+                        <div class="schedule-time">6:00 PM</div>
+                        <div class="schedule-details">
+                            <h4>Strength Training</h4>
+                            <p>Chest & Triceps</p>
+                            <div class="schedule-trainer">
+                                <i class="fas fa-user"></i>
+                                <span>Trainer David</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="schedule-item">
+                        <div class="schedule-time">7:30 PM</div>
+                        <div class="schedule-details">
+                            <h4>Yoga Session</h4>
+                            <p>Restorative yoga</p>
+                            <div class="schedule-trainer">
+                                <i class="fas fa-user"></i>
+                                <span>Instructor Sophia</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Water Tracker -->
+                <div class="water-container animate" style="animation-delay: 0.4s">
+                    <div class="section-header">
+                        <h2>Water Intake</h2>
+                        <button class="btn btn-outline">History</button>
+                    </div>
+                    
+                    <div class="water-tracker">
+                        <div class="water-goal">
+                            Today's goal: <span>8 glasses</span>
+                        </div>
+                        
+                        <div class="water-glasses">
+                            <div class="water-glass active">
+                                <div class="water-fill"></div>
+                            </div>
+                            <div class="water-glass active">
+                                <div class="water-fill"></div>
+                            </div>
+                            <div class="water-glass active">
+                                <div class="water-fill"></div>
+                            </div>
+                            <div class="water-glass active">
+                                <div class="water-fill"></div>
+                            </div>
+                            <div class="water-glass">
+                                <div class="water-fill"></div>
+                            </div>
+                            <div class="water-glass">
+                                <div class="water-fill"></div>
+                            </div>
+                            <div class="water-glass">
+                                <div class="water-fill"></div>
+                            </div>
+                            <div class="water-glass">
+                                <div class="water-fill"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="water-add">
+                            <div class="water-btn">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <span>Add a glass</span>
+                        </div>
+                        
+                        <div class="water-stats">
+                            <div class="water-stat">
+                                <div class="water-stat-value">4</div>
+                                <div class="water-stat-label">Glasses</div>
+                            </div>
+                            <div class="water-stat">
+                                <div class="water-stat-value">1.2L</div>
+                                <div class="water-stat-label">Volume</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Workouts -->
+                <div class="workouts-container animate" style="animation-delay: 0.5s">
+                    <div class="section-header">
+                        <h2>Recent Workouts</h2>
+                        <button class="btn btn-outline">View All</button>
+                    </div>
+                    
+                    <div class="workout">
+                        <div class="workout-icon">
+                            <i class="fas fa-running"></i>
+                        </div>
+                        <div class="workout-info">
+                            <h4>Cardio Session</h4>
+                            <div class="workout-stats">
+                                <div class="workout-stat">
+                                    <i class="fas fa-clock"></i>
+                                    <span>45 min</span>
+                                </div>
+                                <div class="workout-stat">
+                                    <i class="fas fa-fire"></i>
+                                    <span>420 cal</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="workout-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="workout">
+                        <div class="workout-icon">
+                            <i class="fas fa-dumbbell"></i>
+                        </div>
+                        <div class="workout-info">
+                            <h4>Upper Body</h4>
+                            <div class="workout-stats">
+                                <div class="workout-stat">
+                                    <i class="fas fa-clock"></i>
+                                    <span>60 min</span>
+                                </div>
+                                <div class="workout-stat">
+                                    <i class="fas fa-fire"></i>
+                                    <span>380 cal</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="workout-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="workout">
+                        <div class="workout-icon">
+                            <i class="fas fa-swimmer"></i>
+                        </div>
+                        <div class="workout-info">
+                            <h4>Swimming</h4>
+                            <div class="workout-stats">
+                                <div class="workout-stat">
+                                    <i class="fas fa-clock"></i>
+                                    <span>30 min</span>
+                                </div>
+                                <div class="workout-stat">
+                                    <i class="fas fa-fire"></i>
+                                    <span>310 cal</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="workout-actions">
+                            <div class="action-btn">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+        
+        // Dark mode toggle
+        document.getElementById('dark-mode-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const icon = this.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+        
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Progress Chart
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            const progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1 Oct', '5 Oct', '10 Oct', '15 Oct', '20 Oct', '25 Oct', '30 Oct'],
+                    datasets: [
+                        {
+                            label: 'Weight (kg)',
+                            data: [71, 70.5, 70.2, 69.8, 69.5, 69.1, 68.8],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Body Fat %',
+                            data: [28, 27.5, 27, 26.8, 26.5, 26.2, 25.8],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Muscle Mass (kg)',
+                            data: [35, 35.5, 36, 36.2, 36.5, 36.7, 37],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            padding: 12,
+                            cornerRadius: 8
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Schedule day selection
+            document.querySelectorAll('.schedule-day').forEach(day => {
+                day.addEventListener('click', function() {
+                    document.querySelectorAll('.schedule-day').forEach(d => d.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Water glass selection
+            document.querySelectorAll('.water-glass').forEach((glass, index) => {
+                glass.addEventListener('click', function() {
+                    if (index < 4) return;
+                    
+                    if (this.classList.contains('active')) {
+                        this.classList.remove('active');
+                    } else {
+                        this.classList.add('active');
+                    }
+                    
+                    const activeGlasses = document.querySelectorAll('.water-glass.active').length;
+                    document.querySelector('.water-stat-value').textContent = activeGlasses;
+                });
+            });
+            
+            // Add water glass
+            document.querySelector('.water-btn').addEventListener('click', function() {
+                const glasses = document.querySelectorAll('.water-glass');
+                for (let i = 0; i < glasses.length; i++) {
+                    if (!glasses[i].classList.contains('active')) {
+                        glasses[i].classList.add('active');
+                        break;
+                    }
+                }
+                
+                const activeGlasses = document.querySelectorAll('.water-glass.active').length;
+                document.querySelector('.water-stat-value').textContent = activeGlasses;
+            });
+            
+            // Animation for elements
+            const animateOnScroll = () => {
+                const elements = document.querySelectorAll('.animate');
+                elements.forEach(el => {
+                    const elementTop = el.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        el.style.opacity = "1";
+                        el.style.transform = "translateY(0)";
+                    }
+                });
+            };
+            
+            window.addEventListener('load', animateOnScroll);
+            window.addEventListener('scroll', animateOnScroll);
+        });
+    </script>
+</body>
+</html>

@@ -1,20 +1,57 @@
-<div class="mx-auto max-w-sm">
-  <.header class="text-center">
-    Forgot your password?
-    <:subtitle>We'll send a password reset link to your inbox</:subtitle>
-  </.header>
+<div class="mx-auto max-w-md p-8 bg-white rounded-xl shadow-sm">
+  <!-- Header Section -->
+  <div class="text-center mb-8">
+    <svg class="mx-auto h-10 w-10 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>
+    <h1 class="mt-4 text-2xl font-bold text-gray-900">Forgot your password?</h1>
+    <p class="mt-2 text-sm text-gray-600">
+      We'll send a password reset link to your inbox
+    </p>
+  </div>
 
-  <.simple_form :let={f} for={@conn.params["user"]} as={:user} action={~p"/users/reset_password"}>
-    <.input field={f[:email]} type="email" placeholder="Email" required />
+  <!-- Password Reset Form -->
+  <.simple_form 
+    :let={f} 
+    for={@conn.params["user"]} 
+    as={:user} 
+    action={~p"/users/reset_password"} 
+    class="space-y-6"
+  >
+    <.input
+      field={f[:email]}
+      type="email"
+      label="Email Address"
+      required
+      placeholder="your@email.com"
+      class="block w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand focus:border-transparent"
+      label_class="block text-sm font-medium text-gray-700 mb-1"
+    />
+
     <:actions>
-      <.button phx-disable-with="Sending..." class="w-full">
-        Send password reset instructions
+      <.button 
+        phx-disable-with="Sending..." 
+        class="w-full py-3 px-4 bg-brand hover:bg-brand-dark text-white font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+      >
+        Send Reset Instructions
       </.button>
     </:actions>
   </.simple_form>
 
-  <p class="text-center text-sm mt-4">
-    <.link href={~p"/users/register"}>Register</.link>
-    | <.link href={~p"/users/log_in"}>Log in</.link>
-  </p>
+  <!-- Alternative Actions -->
+  <div class="mt-6 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
+    <.link 
+      href={~p"/users/register"} 
+      class="font-medium text-brand hover:text-brand-dark transition-colors"
+    >
+      Create new account
+    </.link>
+    <span class="mx-2">•</span>
+    <.link 
+      href={~p"/users/log_in"} 
+      class="font-medium text-brand hover:text-brand-dark transition-colors"
+    >
+      Return to login
+    </.link>
+  </div>
 </div>

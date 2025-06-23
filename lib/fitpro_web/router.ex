@@ -21,7 +21,9 @@ defmodule FitproWeb.Router do
     pipe_through :browser
 
     # Public routes
-    get "/", PageController, :index
+    get "/", PageController, :home
+    get "/profile", PageController, :profile
+   # get "/index", PageController, :index
     #get "/continue-guest", AuthController, :continue_guest
   end
 
@@ -40,9 +42,9 @@ defmodule FitproWeb.Router do
   scope "/", FitproWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
-    get "/users/register", PageController, :index
+    get "/users/register", UserRegistrationController, :new
     post "/users/register", UserRegistrationController, :create
-    get "/users/log_in", PageController, :index
+    get "/users/log_in", UserSessionController, :new
     post "/users/log_in", UserSessionController, :create
     get "/users/reset_password", UserResetPasswordController, :new
     post "/users/reset_password", UserResetPasswordController, :create
